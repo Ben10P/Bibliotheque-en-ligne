@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    background: linear-gradient(rgba(0,0,0,0.7),#2f2b50),url("biblio1.jpg");
+}
+
+header {
+    background-color: #f5e89d;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    background: linear-gradient(rgba(0,0,0,0.7),#22011a),url("head-img.jpg");
+}
+
+main {
+    margin: 2rem auto;
+    width: 80%;
+}
+
+#search {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label, input {
+    margin-bottom: 1rem;
+}
+
+button {
+    width: 100px;
+    padding: 0.5rem;
+    background-color: #5932e6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #468fa1;
+}
+
+
+

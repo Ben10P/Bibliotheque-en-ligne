@@ -1,0 +1,6 @@
+        <div >
+            <a href="ajouter.php"><button>Ajouter un livre</button></a>
+            <a href="emprunter.php"><button>Emprunter un livre</button></a>
+            <a href="emprunts.php"><button>Gérer les emprunts</button></a>
+            <a href="wishlist.php"><button>Ma liste de lecture</button></a>
+        </div>
