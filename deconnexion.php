@@ -8,6 +8,6 @@ $_SESSION = array();
 session_destroy();
 
 // Rediriger vers la page d'inscription
-header("Location: inscription.php");
+header("Location: accueil.php");
 exit;
 ?>

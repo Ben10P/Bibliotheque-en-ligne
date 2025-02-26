@@ -1,4 +1,14 @@
 <?php
+
+// Démarrer la session
+session_start();
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['utilisateur_connecte']) || $_SESSION['utilisateur_connecte'] !== true) {
+    // Rediriger vers la page d'inscription si l'utilisateur n'est pas connecté
+    header("Location: inscription.php");
+    exit;
+}
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -43,9 +53,19 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
+<nav class="navbar">
+        <h1>B<span>i</span>B<span>L</span>i<span>o</span>.</h1> 
+            <div class="ab">
+                <a href="#accueil">Accueil</a>
+                <a href="#apropos">A propos</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="btn">
+            <a href="deconnexion.php"><button>Déconnexion</button></a> 
+            </div>     
+    </nav>
+    
         <h1>Détails du livre</h1>
-    </header>
     <main  id="search">
         <h2><?php echo $row["titre"]; ?></h2>
         <p><strong>Auteur:</strong> <?php echo $row["auteur"]; ?></p>

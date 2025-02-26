@@ -1,4 +1,6 @@
 <?php
+
+
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -30,9 +32,20 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
+<nav class="navbar">
+        <h1>B<span>i</span>B<span>L</span>i<span>o</span>.</h1> 
+            <div class="ab">
+                <a href="#accueil">Accueil</a>
+                <a href="#apropos">A propos</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="btn">
+            <a href="deconnexion.php"><button>Déconnexion</button></a> 
+            </div>     
+    </nav>
+    
         <h1>Gestion des emprunts</h1>
-    </header>
+    
     <main id="search">
         <?php
         if ($result->num_rows > 0) {

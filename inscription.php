@@ -1,5 +1,4 @@
 <?php
-// Connexion à la base de données
 session_start();
 $servername = "localhost";
 $username = "root";
@@ -15,44 +14,42 @@ if ($conn->connect_error) {
 }
 
 // Traitement du formulaire d'inscription
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["inscription"])) {
-    $nom = $conn->real_escape_string($_POST["nom"]);
-    $email = $conn->real_escape_string($_POST["email"]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nom = $_POST['nom'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $role = 'utilisateur'; // Valeur par défaut
 
-    // Insérer le nouveau lecteur dans la base de données
-    $sql = "INSERT INTO lecteurs (nom, email) VALUES ('$nom', '$email')";
+    // Vérifier si l'email existe déjà
+    $stmt = $conn->prepare("SELECT email FROM lecteurs WHERE email = ?");
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $stmt->store_result();
 
-    if ($conn->query($sql) === TRUE) {
-        $_SESSION['utilisateur_connecte'] = true;
-        $_SESSION['id_lecteur'] = $conn->insert_id;
-        header("Location: index.php");
+    if ($stmt->num_rows > 0) {
+        $_SESSION['error'] = 'Email déjà utilisé.';
+        header('Location: inscription.php');
         exit;
     } else {
-        echo "Erreur: " . $sql . "<br>" . $conn->error;
-    }
-}
-
-// Traitement du formulaire de connexion
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["connexion"])) {
-    $email = $conn->real_escape_string($_POST["email"]);
-
-    // Vérifier si l'utilisateur existe dans la base de données
-    $sql = "SELECT * FROM lecteurs WHERE email='$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $_SESSION['utilisateur_connecte'] = true;
-        $_SESSION['id_lecteur'] = $row['id'];
-        header("Location: index.php");
-        exit;
-    } else {
-        echo "Aucun compte trouvé avec cet email";
+        // Insérer les informations dans la base de données
+        $stmt = $conn->prepare("INSERT INTO lecteurs (nom, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param('ssss', $nom, $email, $password, $role);
+    
+        if ($stmt->execute()) {
+            $_SESSION['success'] = 'Inscription réussie. Vous pouvez maintenant vous connecter.';
+            header('Location: connection.php');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+            header('Location: inscription.php');
+            exit;
+        }
     }
 }
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -79,10 +76,11 @@ $conn->close();
             overflow: hidden;
             width: 80%;
             max-width: 900px;
-            margin-top: 100px;
+            margin-top: 250px;
         }
         .form-section {
-            background-color:rgb(173, 92, 92);
+            
+            background-color:rgb(129, 123, 123);
             padding: 20px;
             flex: 1;
         }
@@ -97,20 +95,21 @@ $conn->close();
             margin-bottom: 5px;
         }
         .form-section input {
-            width: 100%;
+            width: 85%;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
         .form-section button {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             background-color: #333;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            
         }
         .image-section {
             flex: 1;
@@ -120,7 +119,7 @@ $conn->close();
         header {
             width: 100%;
             padding: 10px 20px;
-            background-color: #333;
+            background-color: #f5f5f5;
             color: white;
             text-align: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -128,37 +127,63 @@ $conn->close();
             top: 0;
             left: 0;
         }
+        .toggle-password {
+            cursor: pointer;
+        }
+        .login-link {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
     </style>
 </head>
 <body>
     <header>
-        <h1>Bienvenue à la Bibliothèque en Ligne</h1>
-        <p>"Plongez-vous dans notre vaste collection, explorez, empruntez, et enrichissez votre expérience littéraire en quelques clics."</p>  
+    <nav class="navbar">
+        <h1>B<span>i</span>B<span>L</span>i<span>o</span>.</h1> 
+            <div class="ab">
+                <a href="accueil.php">Accueil</a>
+                <a href="#apropos">A propos</a>
+                <a href="#">Contact</a>
+            </div>
+    </nav>
+        <h1 style= "color: black ;" >Bienvenue à la Bibliothèque en Ligne</h1>
+        <p style= "color: black ;">"Plongez-vous dans notre vaste collection, explorez, empruntez, et enrichissez votre expérience littéraire en quelques clics."</p>  
     </header>
     <div class="container">
         <div class="form-section">
             <section>
                 <h2>Inscription</h2>
                 <form action="inscription.php" method="POST">
-                    <input type="hidden" name="inscription" value="1">
-                    <label for="nom">Nom:</label>
-                    <input type="text" id="nom" name="nom" required>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <div class="form-group">
+                        <label for="nom">Nom:</label>
+                        <input type="text" id="name" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe:</label>
+                        <input type="password" id="password" name="password" required>
+                        <span class="toggle-password">👁️</span>
+                    </div>
                     <button type="submit">S'inscrire</button>
-                </form>
-            </section>
-            <section>
-                <h2>Connexion</h2>
-                <form action="inscription.php" method="POST">
-                    <input type="hidden" name="connexion" value="1">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                    <button type="submit">Se connecter</button>
+                    <p>Si vous avez déjà un compte, vueillez vous connecter en cliquant ici: <a class="login-link" href="connection.php">Se connecter</a></p> 
+                
                 </form>
             </section>
         </div>
         <div class="image-section"></div>
     </div>
+
+    <script>
+        document.querySelector('.toggle-password').addEventListener('click', function () {
+            const passwordField = document.querySelector('#password');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+        });
+    </script>
 </body>
 </html>

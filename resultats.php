@@ -1,4 +1,14 @@
 <?php
+
+// Démarrer la session
+session_start();
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['utilisateur_connecte']) || $_SESSION['utilisateur_connecte'] !== true) {
+    // Rediriger vers la page d'inscription si l'utilisateur n'est pas connecté
+    header("Location: inscription.php");
+    exit;
+}
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -59,6 +69,17 @@ if ($titre != '' || $auteur != '') {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<nav class="navbar">
+        <h1>B<span>i</span>B<span>L</span>i<span>o</span>.</h1> 
+            <div class="ab">
+                <a href="#accueil">Accueil</a>
+                <a href="#apropos">A propos</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="btn">
+                <a href="deconnection.php"><button>Déconnection</button></a>
+            </div>     
+    </nav>
     <header>
         <h1>Résultats de recherche</h1>
     </header>
@@ -69,9 +90,14 @@ if ($titre != '' || $auteur != '') {
             if ($search_performed) {
                 if ($result->num_rows > 0) {
                     // Afficher les résultats de la recherche
+                    
                     echo "<ul>";
                     while($row = $result->fetch_assoc()) {
-                        echo "<li><strong>" . $row["titre"]. "</strong> par " . $row["auteur"]. " <a href='details.php?id=" . $row["id"] . "'>Voir les détails</a> <a href='resultats.php?ajouter_id=" . $row["id"] . "&titre=" . urlencode($titre) . "&auteur=" . urlencode($auteur) . "'><button >Ajouter à la liste de lecture</button></a></li>";
+                        echo "<li>  </li>  ";
+                        echo "<li><strong>" . $row["titre"]. "</strong> par " . $row["auteur"]. 
+                        " <a href='details.php?id=" . $row["id"] . "'>Voir les détails</a> 
+                        <a href='resultats.php?ajouter_id=" . $row["id"] . "&titre=" . urlencode($titre) . 
+                        "&auteur=" . urlencode($auteur) . "'><button >Ajouter à la liste de lecture</button></a></li>";
                     }
                     
                     echo "</ul>";
